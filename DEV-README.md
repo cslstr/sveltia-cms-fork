@@ -44,13 +44,17 @@ To keep my fork up to date with the original project, I add the original repo as
 - I create feature or dev branches off `main` for all my work.
 - Branch naming convention: `dev/<feature-name>`, e.g. `dev/custom-theme-support`.
 
-    git checkout main
-    git pull origin main
-    git checkout -b dev/my-feature
+```
+git checkout main
+git pull origin main
+git checkout -b dev/my-feature
+```
 
 Push feature branches to my fork:
 
-    git push -u origin dev/my-feature
+```
+git push -u origin dev/my-feature
+```
 
 ---
 
