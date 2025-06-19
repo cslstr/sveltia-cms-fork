@@ -355,3 +355,410 @@ const getUnusedArtworkAssets = () => {
 - **Usage Analytics**: Track asset usage patterns over time
 - **Automated Cleanup**: Optional automated removal of unused assets after specified periods
 - **Export Functionality**: Export lists of unused assets for external processing
+
+---
+
+## Feature 3: GitHub Releases Integration
+
+### Overview
+**Implementation Date**: June 19, 2025
+**Status**: ✅ Complete and Production Ready
+
+A comprehensive GitHub releases integration that allows content managers to create semantic versioned releases directly from the Sveltia CMS interface. This feature provides automated version management, configurable release types, and seamless integration with GitHub's release system.
+
+### Features
+
+#### Release Management Interface
+- **Deploy Button Integration**: Enhanced deploy button in global toolbar with release functionality
+- **Release Type Selection**: Choose between patch, minor, and major releases with semantic versioning
+- **Version Preview**: Real-time preview of next version based on selected release type
+- **Custom Release Notes**: Optional custom release notes in addition to configured defaults
+
+#### Semantic Version Management
+- **Automatic Version Increment**: Intelligent version bumping based on release type
+- **Version Parsing**: Robust parsing of existing version tags (supports both `v1.2.3` and `1.2.3` formats)
+- **Release Naming**: Automatic generation of release names based on type and version
+
+#### Configurable Release Types
+- **Patch Releases**: Bug fixes and minor updates (increments patch version)
+- **Minor Releases**: Content updates and new features (increments minor version, resets patch)
+- **Major Releases**: Breaking changes and major updates (increments major version, resets minor and patch)
+- **Custom Release Notes**: Configurable default release notes per release type
+
+### Configuration
+
+Add release configuration to your CMS config:
+
+```yaml
+deployment:
+  release_types:
+    patch:
+      label: "Bug Fixes"
+      release_note: "Deployed non-content bug fixes - Gallery updated"
+    minor:
+      label: "Content Update"
+      release_note: "Deployed content updates - Gallery updated"
+    major:
+      label: "Major Update"
+      release_note: "Deployed major site updates - Gallery updated"
+```
+
+### How It Works
+
+1. **Version Detection**: Fetches latest release from GitHub repository
+2. **Release Type Selection**: User selects patch, minor, or major release type
+3. **Version Calculation**: Automatically calculates next semantic version
+4. **Release Creation**: Creates GitHub release with generated tag, name, and notes
+5. **Authentication**: Uses existing GitHub authentication token from CMS
+
+### User Experience
+
+#### Release Workflow
+1. **Access**: Click deploy button in global toolbar
+2. **Select Type**: Choose release type (patch/minor/major) with version preview
+3. **Add Notes**: Optionally add custom release notes
+4. **Create Release**: Confirm to create GitHub release
+5. **Feedback**: Real-time status updates and error handling
+
+#### Interface Elements
+- **Deploy Modal**: Enhanced modal with release type selection
+- **Version Display**: Shows current and next version prominently
+- **Release Type Buttons**: Clear visual distinction between release types
+- **Progress Indicators**: Loading states and success/error feedback
+
+### Technical Implementation
+
+#### Files Created/Modified
+- `src/lib/services/deployment/github-releases.js` - GitHub API integration
+- `src/lib/services/deployment/version-manager.js` - Version management utilities
+- `src/lib/components/deployment/deploy-modal.svelte` - Enhanced deploy interface
+- `src/lib/components/deployment/release-type-buttons.svelte` - Release type selection
+- `src/lib/components/deployment/version-display.svelte` - Version display component
+- `src/lib/components/global/toolbar/items/deploy-button.svelte` - Enhanced deploy button
+- `src/lib/locales/en.js` - Localization strings
+
+#### Core Architecture
+- **GitHub API Integration**: Direct integration with GitHub releases API
+- **Semantic Versioning**: Full semver support with intelligent incrementing
+- **Error Handling**: Comprehensive error handling and user feedback
+- **Authentication**: Leverages existing GitHub token from CMS authentication
+
+#### Version Management Algorithm
+```javascript
+const incrementVersion = (currentVersion, releaseType) => {
+  const { major, minor, patch } = parseVersion(currentVersion);
+  
+  switch (releaseType) {
+    case 'patch': return `v${major}.${minor}.${patch + 1}`;
+    case 'minor': return `v${major}.${minor + 1}.0`;
+    case 'major': return `v${major + 1}.0.0`;
+  }
+};
+```
+
+### Benefits
+
+#### For Content Managers
+- **Streamlined Workflow**: Create releases without leaving CMS interface
+- **Version Control**: Automatic semantic versioning with clear release types
+- **Documentation**: Structured release notes with configurable defaults
+- **Visibility**: Clear version history and release tracking
+
+#### For Developers
+- **Automated Releases**: Reduces manual release management overhead
+- **Consistent Versioning**: Enforces semantic versioning standards
+- **Integration**: Seamless integration with existing GitHub workflows
+- **Extensibility**: Configurable release types and notes
+
+### Compatibility
+
+- **GitHub Integration**: Works with any GitHub repository
+- **Authentication**: Uses existing Sveltia CMS GitHub authentication
+- **Semantic Versioning**: Follows semver.org standards
+- **Release Notes**: Compatible with GitHub release format
+
+---
+
+## Feature 4: Item Count Display
+
+### Overview
+**Implementation Date**: June 19, 2025
+**Status**: ✅ Complete and Production Ready
+
+A comprehensive item counting system that displays the number of entries and assets in list views, with intelligent filter-aware messaging and localization support.
+
+### Features
+
+#### Smart Count Display
+- **Total Counts**: Shows total number of entries or assets in current view
+- **Filter-Aware**: Updates count display when filters are applied
+- **Zero State Handling**: Appropriate messaging when no items are found
+- **Real-time Updates**: Counts update automatically as content changes
+
+#### Filter Integration
+- **Active Filter Detection**: Recognizes when filters are applied
+- **Filter Labels**: Shows human-readable filter descriptions
+- **Multiple Filter Support**: Handles multiple simultaneous filters
+- **Named Filter Display**: Shows configured filter names from collection config
+
+#### Localization Support
+- **Multi-language**: Full English and Japanese language support
+- **Dynamic Messaging**: Context-aware messages based on count and filter state
+- **Accessible**: Screen reader compatible with proper ARIA labels
+
+### Implementation
+
+#### Component Structure
+- **Reusable Component**: [`src/lib/components/common/page-toolbar/item-count.svelte`](src/lib/components/common/page-toolbar/item-count.svelte:1)
+- **Dual Support**: Works with both entry collections and asset groups
+- **Type Safety**: Full TypeScript support with proper type definitions
+
+#### Display Logic
+```javascript
+const displayText = $derived(() => {
+  const count = totalCount();
+  const hasFilters = hasActiveFilters;
+  
+  if (count === 0) {
+    return type === 'entries' ? $_('no_entries') : $_('no_assets');
+  }
+
+  if (!hasFilters) {
+    return type === 'entries'
+      ? $_('x_entries_displayed', { values: { count } })
+      : $_('x_assets_displayed', { values: { count } });
+  }
+
+  // Filter-specific messaging...
+});
+```
+
+#### Integration Points
+- **Entry Lists**: Integrated into content list toolbars
+- **Asset Lists**: Integrated into asset management toolbars
+- **Filter System**: Connects with existing filter infrastructure
+- **View Preferences**: Respects user view and grouping preferences
+
+### User Experience
+
+#### Display Variations
+- **No Items**: "No entries" / "No assets"
+- **Unfiltered**: "X entries displayed" / "X assets displayed"
+- **Single Filter**: "X entries matching 'Published'" / "X assets matching 'Images'"
+- **Multiple Filters**: "X entries matching 'Published' and 'Featured'"
+- **Generic Filter**: "X entries matching filter" (fallback)
+
+#### Visual Design
+- **Subtle Styling**: Secondary color with small font size
+- **Non-intrusive**: Doesn't interfere with main interface elements
+- **Consistent Placement**: Standardized position in toolbars
+
+### Technical Implementation
+
+#### Files Modified
+- `src/lib/components/common/page-toolbar/item-count.svelte` - Main component
+- `src/lib/components/contents/list/primary-toolbar.svelte` - Entry list integration
+- `src/lib/components/assets/list/primary-toolbar.svelte` - Asset list integration
+- `src/lib/locales/en.js` & `src/lib/locales/ja.js` - Localization strings
+
+#### Architecture
+- **Reactive Stores**: Uses Svelte reactive system for efficient updates
+- **Type Discrimination**: Handles both entry and asset data structures
+- **Performance**: Minimal computational overhead with derived stores
+- **Accessibility**: Proper semantic markup and ARIA support
+
+### Benefits
+
+#### For Content Managers
+- **Quick Overview**: Immediate understanding of content volume
+- **Filter Feedback**: Clear indication of filter effectiveness
+- **Navigation Aid**: Helps with content discovery and management
+- **Status Awareness**: Understanding of current view state
+
+#### For Users
+- **Information Density**: More informative interface without clutter
+- **Context Awareness**: Better understanding of current view
+- **Accessibility**: Screen reader friendly implementation
+- **Consistency**: Uniform experience across entry and asset views
+
+---
+
+## Feature 5: Enhanced Asset Management with Filter Integration
+
+### Overview
+**Implementation Date**: June 19, 2025
+**Status**: ✅ Complete and Production Ready
+
+Enhanced asset management capabilities including improved filtering system integration and "Show Unused Artwork" filter functionality that works seamlessly with the unused asset detection system.
+
+### Features
+
+#### Advanced Filter Integration
+- **"Show Unused Artwork" Filter**: Dedicated checkbox filter in asset toolbar
+- **Smart Visibility**: Filter only appears when artwork assets are present
+- **State Persistence**: Filter state saved with other view preferences
+- **Seamless Integration**: Works with existing sorting, grouping, and other filters
+
+#### Enhanced Asset View Service
+- **Filter Management**: Centralized filter state management
+- **Reactive Updates**: Automatic updates when asset or entry data changes
+- **Performance Optimization**: Efficient filtering with minimal re-computation
+- **Extensible Architecture**: Ready for additional filter types
+
+### Technical Implementation
+
+#### Files Modified/Enhanced
+- `src/lib/services/assets/view.js` - Enhanced filtering system
+- `src/lib/components/assets/list/secondary-toolbar.svelte` - Added filter checkbox
+- Integration with existing unused asset detection system
+
+#### Filter Architecture
+```javascript
+// Enhanced view service with unused asset filtering
+const assetViewFilters = {
+  showUnusedArtwork: false,
+  // ... other filters
+};
+
+const applyFilters = (assets) => {
+  let filtered = assets;
+  
+  if (assetViewFilters.showUnusedArtwork) {
+    filtered = filtered.filter(asset => isUnusedArtworkAsset(asset));
+  }
+  
+  return filtered;
+};
+```
+
+### User Experience
+
+#### Filter Workflow
+1. **Discovery**: Checkbox appears automatically when artwork assets are present
+2. **Activation**: Click "Show Unused Artwork" to filter view
+3. **Visual Feedback**: Asset list updates to show only unused artwork assets
+4. **State Persistence**: Filter state maintained across sessions
+5. **Integration**: Works with other filters and view options
+
+#### Interface Elements
+- **Conditional Display**: Filter only shown when relevant
+- **Clear Labeling**: Descriptive checkbox text with localization
+- **Visual Integration**: Consistent with existing toolbar design
+- **Accessibility**: Full keyboard and screen reader support
+
+### Benefits
+
+#### For Content Managers
+- **Focused Workflow**: Quickly isolate unused assets for review
+- **Efficient Cleanup**: Streamlined asset management process
+- **Visual Clarity**: Clear separation of used vs unused assets
+- **Workflow Integration**: Seamless integration with existing asset management
+
+#### For System Performance
+- **Optimized Filtering**: Efficient reactive filtering system
+- **Minimal Overhead**: Lightweight implementation with smart caching
+- **Scalable Architecture**: Ready for additional filter types
+- **State Management**: Proper state persistence and restoration
+
+---
+
+## Development Notes
+
+### File Structure
+```
+src/lib/
+├── services/
+│   ├── contents/
+│   │   └── preview-templates.js              # Template registry with dynamic loading
+│   ├── assets/
+│   │   ├── artwork-usage.js                  # Unused asset detection service
+│   │   └── view.js                           # Enhanced filtering system
+│   └── deployment/
+│       ├── github-releases.js               # GitHub releases integration
+│       └── version-manager.js               # Semantic version management
+└── components/
+    ├── contents/details/preview/
+    │   └── entry-preview.svelte               # Modified to support dynamic templates
+    ├── assets/
+    │   ├── shared/
+    │   │   ├── unused-asset-badge.svelte      # Visual indicator component
+    │   │   └── info-panel.svelte              # Enhanced with artwork usage info
+    │   └── list/
+    │       ├── asset-list-item.svelte         # Badge integration
+    │       └── secondary-toolbar.svelte       # Added filter checkbox
+    ├── deployment/
+    │   ├── deploy-modal.svelte                # Enhanced with release functionality
+    │   ├── release-type-buttons.svelte        # Release type selection
+    │   └── version-display.svelte             # Version display component
+    └── common/page-toolbar/
+        └── item-count.svelte                  # Item counting component
+
+# Site-specific templates (example)
+/your-cms-directory/
+├── index.html
+├── config.yml
+└── artwork-preview.js                         # Site-specific template
+```
+
+### Key Architecture Changes
+- **Dynamic Loading**: Templates are loaded at runtime using ES6 dynamic imports
+- **Site-Specific**: Each site can have its own templates without modifying CMS source
+- **Async Template Resolution**: Template loading is asynchronous with proper error handling
+- **Caching**: Templates are cached after first load for performance
+- **GitHub Integration**: Direct API integration for release management
+- **Semantic Versioning**: Full semver support with intelligent incrementing
+- **Enhanced Filtering**: Reactive filtering system with state persistence
+
+### Testing Recommendations
+
+#### Feature 1: Custom Preview Templates
+- Test with actual artwork collection data
+- Verify real-time field updates
+- Check accessibility with screen readers
+- Validate responsive design on different screen sizes
+- Test template loading and error handling
+- Verify templates work in production builds
+
+#### Feature 2: Unused Asset Detection
+- Test with various artwork collection sizes
+- Verify accurate detection of used vs unused assets
+- Check filter integration and state persistence
+- Test visual indicators in both grid and list views
+- Validate accessibility and localization
+- Test performance with large asset collections
+
+#### Feature 3: GitHub Releases Integration
+- Test semantic version incrementing for all release types
+- Verify GitHub API integration with valid authentication
+- Test error handling for network failures and API errors
+- Check release creation with custom and default notes
+- Validate version parsing with different tag formats
+- Test UI responsiveness during release creation
+
+#### Feature 4: Item Count Display
+- Test count accuracy with various filter combinations
+- Verify localization in both English and Japanese
+- Check accessibility with screen readers
+- Test real-time updates when content changes
+- Validate display with zero items and large counts
+- Test integration with existing filter systems
+
+#### Feature 5: Enhanced Asset Management
+- Test "Show Unused Artwork" filter functionality
+- Verify filter state persistence across sessions
+- Check integration with other asset filters
+- Test conditional display of filter checkbox
+- Validate performance with large asset collections
+- Test accessibility and keyboard navigation
+
+### Future Enhancements
+- Template hot-reloading in development
+- Template validation and error reporting
+- Template inheritance and composition
+- Visual template editor
+- Template marketplace/sharing system
+- Multi-collection support for unused asset detection
+- Bulk operations for unused assets
+- Usage analytics and reporting
+- Automated cleanup workflows
+- Advanced release management features
