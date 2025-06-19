@@ -2,6 +2,7 @@
   import { Button, Divider, Icon, Spacer, Toolbar } from '@sveltia/ui';
   import { _ } from 'svelte-i18n';
   import FilterMenu from '$lib/components/common/page-toolbar/filter-menu.svelte';
+  import ItemCount from '$lib/components/common/page-toolbar/item-count.svelte';
   import ItemSelector from '$lib/components/common/page-toolbar/item-selector.svelte';
   import SortMenu from '$lib/components/common/page-toolbar/sort-menu.svelte';
   import ViewSwitcher from '$lib/components/common/page-toolbar/view-switcher.svelte';
@@ -18,6 +19,11 @@
     <ItemSelector allItems={Object.values($assetGroups).flat(1)} selectedItems={selectedAssets} />
   {/if}
   <Spacer flex />
+  <ItemCount
+    groups={$assetGroups}
+    activeFilters={$currentView.filter}
+    type="assets"
+  />
   <SortMenu
     disabled={!hasMultipleAssets}
     {currentView}

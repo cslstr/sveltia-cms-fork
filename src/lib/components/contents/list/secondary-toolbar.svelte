@@ -3,6 +3,7 @@
   import { _ } from 'svelte-i18n';
   import FilterMenu from '$lib/components/common/page-toolbar/filter-menu.svelte';
   import GroupMenu from '$lib/components/common/page-toolbar/group-menu.svelte';
+  import ItemCount from '$lib/components/common/page-toolbar/item-count.svelte';
   import ItemSelector from '$lib/components/common/page-toolbar/item-selector.svelte';
   import SortMenu from '$lib/components/common/page-toolbar/sort-menu.svelte';
   import ViewSwitcher from '$lib/components/common/page-toolbar/view-switcher.svelte';
@@ -41,6 +42,12 @@
       />
     {/if}
     <Spacer flex />
+    <ItemCount
+      groups={$entryGroups}
+      activeFilters={$currentView.filters}
+      collection={entryCollection}
+      type="entries"
+    />
     <SortMenu
       disabled={!hasMultipleEntries || !$sortFields.length}
       {currentView}
