@@ -813,19 +813,13 @@ export const strings = {
     local_mode_message: 'You are working with a local repository. To deploy changes, please login via GitHub on the production site.',
     release_types: {
       patch: {
-        label: 'Non-content bug fixes',
-        description: 'Style changes, typo corrections, minor fixes',
-        example: 'v1.0.0 → v1.0.1'
+        label: 'Non-content bug fixes'
       },
       minor: {
-        label: 'Content updates',
-        description: 'Adding or changing artwork, content updates',
-        example: 'v1.0.0 → v1.1.0'
+        label: 'Content updates'
       },
       major: {
-        label: 'Major site updates',
-        description: 'Significant changes, new features, major redesigns',
-        example: 'v1.0.0 → v2.0.0'
+        label: 'Major site updates'
       }
     }
   },

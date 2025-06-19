@@ -3,7 +3,7 @@
   import { _ } from 'svelte-i18n';
   import { siteConfig } from '$lib/services/config';
   import { fetchLatestRelease, createRelease } from '$lib/services/deployment/github-releases';
-  import { incrementVersion, generateReleaseName, generateDefaultReleaseNotes } from '$lib/services/deployment/version-manager';
+  import { incrementVersion, generateReleaseName, generateReleaseNotes } from '$lib/services/deployment/version-manager';
   import VersionDisplay from './version-display.svelte';
   import ReleaseTypeButtons from './release-type-buttons.svelte';
 
@@ -49,8 +49,8 @@
       const releaseName = generateReleaseName(newVersion, selectedReleaseType);
       const targetBranch = $siteConfig?.backend?.branch || 'main';
       
-      // Use release notes or generate default ones
-      const finalReleaseNotes = releaseNotes.trim() || generateDefaultReleaseNotes(selectedReleaseType);
+      // Use release notes with config and custom notes
+      const finalReleaseNotes = generateReleaseNotes(selectedReleaseType, $siteConfig, releaseNotes);
 
       await createRelease(newVersion, releaseName, finalReleaseNotes, targetBranch);
 
@@ -83,12 +83,6 @@
     }
   });
 
-  // Auto-fill release notes when release type changes
-  $effect(() => {
-    if (selectedReleaseType && !releaseNotes.trim()) {
-      releaseNotes = generateDefaultReleaseNotes(selectedReleaseType);
-    }
-  });
 </script>
 
 <Dialog
@@ -118,7 +112,7 @@
         id="release-notes"
         bind:value={releaseNotes}
         placeholder={$_('deployment.release_notes_placeholder')}
-        rows={6}
+        rows={3}
       />
     </div>
 

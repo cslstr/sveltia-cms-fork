@@ -2,6 +2,7 @@
   import { Button } from '@sveltia/ui';
   import { _ } from 'svelte-i18n';
   import { backendName } from '$lib/services/backends';
+  import { siteConfig } from '$lib/services/config';
   import DeployModal from '$lib/components/deployment/deploy-modal.svelte';
   import LocalModeModal from '$lib/components/deployment/local-mode-modal.svelte';
 
@@ -10,6 +11,12 @@
 
   const isGitHubBackend = $derived($backendName === 'github');
   const showButton = $derived(!!$backendName);
+
+  const buttonLabel = $derived(
+    isGitHubBackend
+      ? $_('deploy_changes')
+      : ($siteConfig?.deployment?.local_mode?.title || 'Deploy Not Available')
+  );
 
   const handleDeployClick = () => {
     if (isGitHubBackend) {
@@ -23,7 +30,7 @@
 {#if showButton}
   <Button
     variant="secondary"
-    label={isGitHubBackend ? $_('deploy_changes') : $_('deploy_not_available')}
+    label={buttonLabel}
     onclick={handleDeployClick}
   />
 

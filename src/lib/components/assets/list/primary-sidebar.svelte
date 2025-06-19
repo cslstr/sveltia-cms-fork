@@ -4,6 +4,7 @@
   import equal from 'fast-deep-equal';
   import { _, locale as appLocale } from 'svelte-i18n';
   import QuickSearchBar from '$lib/components/global/toolbar/items/quick-search-bar.svelte';
+  import DeployButton from '$lib/components/global/toolbar/items/deploy-button.svelte';
   import { goto } from '$lib/services/app/navigation';
   import {
     allAssetFolders,
@@ -33,12 +34,15 @@
 <div role="none" class="primary-sidebar">
   {#if $isSmallScreen}
     <h2>{$_('assets')}</h2>
-    <QuickSearchBar
-      onclick={(event) => {
-        event.preventDefault();
-        goto('/search');
-      }}
-    />
+    <div class="search-toolbar">
+      <QuickSearchBar
+        onclick={(event) => {
+          event.preventDefault();
+          goto('/search');
+        }}
+      />
+      <DeployButton />
+    </div>
   {/if}
   <Listbox aria-label={$_('asset_folder_list')} aria-controls="assets-container">
     {#each folders as folder ([folder.collectionName, folder.fileName, folder.internalPath].join(':'))}
@@ -130,3 +134,22 @@
     {/each}
   </Listbox>
 </div>
+
+<style>
+  .search-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .search-toolbar :global(.sui.search-bar) {
+    flex: 1;
+  }
+
+  .search-toolbar :global(.sui.button) {
+    flex-shrink: 0;
+    width: auto;
+    margin-inline: 12px !important;
+  }
+</style>
+

@@ -1,6 +1,7 @@
 <script>
   import { Alert, Button, Dialog, Icon } from '@sveltia/ui';
   import { _ } from 'svelte-i18n';
+  import { siteConfig } from '$lib/services/config';
 
   /**
    * @typedef {object} Props
@@ -11,10 +12,40 @@
   let {
     open = $bindable(false)
   } = $props();
+
+  const localModeTitle = $derived(
+    $siteConfig?.deployment?.local_mode?.title || 'Deploy Not Available'
+  );
+
+  const localModeMessage = $derived(
+    $siteConfig?.deployment?.local_mode?.message ||
+    'You are working with a local repository. To deploy changes, please login via GitHub.'
+  );
+
+  // Sanitize message to only allow anchor tags with href and target attributes
+  const sanitizedMessage = $derived(
+    (() => {
+      if (!localModeMessage) return '';
+      
+      // First escape all HTML
+      let escaped = localModeMessage
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+      
+      // Then convert back only safe anchor tags - handle malformed HTML with missing space
+      return escaped.replace(
+        /&lt;a\s+href=['"]([^'"]*?)\s*['"](?:\s*target=['"]([^'"]*?)['"])?&gt;(.*?)&lt;\/a&gt;/gi,
+        (match, href, target, text) => {
+          const targetAttr = target ? ` target="${target}"` : '';
+          return `<a href="${href}"${targetAttr}>${text}</a>`;
+        }
+      );
+    })()
+  );
 </script>
 
 <Dialog
-  title={$_('deployment.local_mode_title')}
+  title={localModeTitle}
   size="medium"
   bind:open
   showOk={false}
@@ -22,20 +53,12 @@
   showClose={true}
 >
   <div class="local-mode-content">
-    <div class="icon-container">
-      <Icon name="info" size="large" />
-    </div>
-    
-    <div class="message">
-      <p>{$_('deployment.local_mode_message')}</p>
-    </div>
-
     <Alert status="info">
-      <strong>Local Repository Mode</strong><br>
       Deployment features require a GitHub connection with proper authentication. 
-      Please use the production site to access deployment functionality.
     </Alert>
-
+    <div class="message">
+      <p>{@html sanitizedMessage}</p>
+    </div>
     <div class="actions">
       <Button
         variant="primary"
@@ -50,14 +73,9 @@
   .local-mode-content {
     display: flex;
     flex-direction: column;
+    margin: 0px 50px;
     gap: 1.5rem;
     text-align: center;
-  }
-
-  .icon-container {
-    display: flex;
-    justify-content: center;
-    color: var(--sui-primary-accent-color);
   }
 
   .message p {

@@ -47,38 +47,40 @@ export const generateReleaseName = (version, releaseType) => {
 };
 
 /**
- * Generate default release notes based on release type
+ * Generate default release notes based on release type and config
+ * @param {'patch'|'minor'|'major'} releaseType - Type of release
+ * @param {any} [config] - Site configuration object
+ * @param {string} [customNotes] - Optional custom notes to append
+ * @returns {string} Release notes
+ */
+export const generateReleaseNotes = (releaseType, config = undefined, customNotes = '') => {
+  // Get the configured release note for this type
+  const configuredNote = config?.deployment?.release_types?.[releaseType]?.release_note;
+  
+  // Fallback templates if not configured
+  const fallbackTemplates = {
+    patch: 'Deployed non-content bug fixes - Gallery updated',
+    minor: 'Deployed content updates - Gallery updated',
+    major: 'Deployed major site updates - Gallery updated'
+  };
+  
+  const baseNote = configuredNote || fallbackTemplates[releaseType] || '';
+  
+  // If there are custom notes, append them on a new line
+  if (customNotes && customNotes.trim()) {
+    return `${baseNote}\n\n${customNotes.trim()}`;
+  }
+  
+  return baseNote;
+};
+
+/**
+ * @deprecated Use generateReleaseNotes instead
  * @param {'patch'|'minor'|'major'} releaseType - Type of release
  * @returns {string} Default release notes template
  */
 export const generateDefaultReleaseNotes = (releaseType) => {
-  const templates = {
-    patch: `## Bug Fixes and Minor Improvements
-
-- Fixed styling issues
-- Corrected typos and content errors
-- Minor performance improvements
-
-This release includes non-content bug fixes and small improvements.`,
-    
-    minor: `## Content Updates
-
-- Added new artwork and content
-- Updated existing content and descriptions
-- Enhanced visual elements
-
-This release includes content updates and additions to the site.`,
-    
-    major: `## Major Site Update
-
-- Significant new features and functionality
-- Major design or structural changes
-- Important updates to site architecture
-
-This is a major release with significant changes to the site.`
-  };
-  
-  return templates[releaseType] || '';
+  return generateReleaseNotes(releaseType);
 };
 
 /**

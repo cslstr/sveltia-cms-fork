@@ -3,6 +3,7 @@
   import { sleep } from '@sveltia/utils/misc';
   import { _, locale as appLocale } from 'svelte-i18n';
   import QuickSearchBar from '$lib/components/global/toolbar/items/quick-search-bar.svelte';
+  import DeployButton from '$lib/components/global/toolbar/items/deploy-button.svelte';
   import { goto } from '$lib/services/app/navigation';
   import { siteConfig } from '$lib/services/config';
   import { allEntries } from '$lib/services/contents';
@@ -17,12 +18,15 @@
 <div role="none" class="primary-sidebar">
   {#if $isSmallScreen}
     <h2>{$_('contents')}</h2>
-    <QuickSearchBar
-      onclick={(event) => {
-        event.preventDefault();
-        goto('/search');
-      }}
-    />
+    <div class="search-toolbar">
+      <QuickSearchBar
+        onclick={(event) => {
+          event.preventDefault();
+          goto('/search');
+        }}
+      />
+      <DeployButton />
+    </div>
   {/if}
   <Listbox aria-label={$_('collection_list')} aria-controls="collection-container">
     {#each collections as { name, label, icon, files, divider = false } (name)}
@@ -60,3 +64,21 @@
     {/each}
   </Listbox>
 </div>
+
+<style>
+  .search-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .search-toolbar :global(.sui.search-bar) {
+    flex: 1;
+  }
+
+  .search-toolbar :global(.sui.button) {
+    flex-shrink: 0;
+    width: auto;
+    margin-inline: 12px !important;
+  }
+</style>

@@ -64,6 +64,7 @@
           flex: none;
           width: 640px;
           max-width: 50%;
+          margin-left: -20%;
 
           @media (width < 768px) {
             flex: auto;
@@ -71,6 +72,7 @@
             width: -webkit-fill-available;
             width: stretch;
             max-width: none;
+            margin-left: 0;
           }
         }
       }
