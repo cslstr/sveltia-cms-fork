@@ -36,6 +36,7 @@
     display: flex;
     align-items: center;
     gap: 1rem;
+    min-height: 3em;
     padding: 0 1rem;
     background: var(--sui-secondary-background-color);
     border: 1px solid var(--sui-secondary-border-color);
@@ -60,7 +61,7 @@
   }
 
   .arrow {
-    margin-top: -0.4em;
+    margin-top: -0.1em;
     font-size: 2rem;
     color: var(--sui-secondary-foreground-color);
   }
