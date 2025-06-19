@@ -124,6 +124,8 @@ export const strings = {
   publish_changes: 'Publish Changes',
   publishing_changes: 'Publishing Changes…',
   publishing_changes_failed: 'Changes could not be published. Please try again later.',
+  deploy_changes: '🚀 Deploy Changes',
+  deploy_not_available: 'Deploy Not Available',
   show_notifications: 'Show Notifications',
   notifications: 'Notifications',
   show_account_menu: 'Show Account Menu',
@@ -794,5 +796,37 @@ export const strings = {
     mb: '{size} MB',
     gb: '{size} GB',
     tb: '{size} TB',
+  },
+
+  // Deployment
+  deployment: {
+    title: 'Deploy Release',
+    current_version: 'Current Version: {version}',
+    next_version: 'Next Version: {version}',
+    select_release_type: 'Select Release Type',
+    release_notes_optional: 'Release Notes (Optional)',
+    release_notes_placeholder: 'Describe what changed in this release...',
+    creating_release: 'Creating Release...',
+    release_created: 'Release {version} created successfully!',
+    release_failed: 'Failed to create release. Please try again.',
+    local_mode_title: 'Deploy Not Available',
+    local_mode_message: 'You are working with a local repository. To deploy changes, please login via GitHub on the production site.',
+    release_types: {
+      patch: {
+        label: 'Non-content bug fixes',
+        description: 'Style changes, typo corrections, minor fixes',
+        example: 'v1.0.0 → v1.0.1'
+      },
+      minor: {
+        label: 'Content updates',
+        description: 'Adding or changing artwork, content updates',
+        example: 'v1.0.0 → v1.1.0'
+      },
+      major: {
+        label: 'Major site updates',
+        description: 'Significant changes, new features, major redesigns',
+        example: 'v1.0.0 → v2.0.0'
+      }
+    }
   },
 };

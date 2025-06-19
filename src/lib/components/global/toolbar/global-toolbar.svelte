@@ -3,6 +3,7 @@
   import { _ } from 'svelte-i18n';
   import AccountButton from '$lib/components/global/toolbar/items/account-button.svelte';
   import CreateButton from '$lib/components/global/toolbar/items/create-button.svelte';
+  import DeployButton from '$lib/components/global/toolbar/items/deploy-button.svelte';
   import HelpButton from '$lib/components/global/toolbar/items/help-button.svelte';
   import NotificationsButton from '$lib/components/global/toolbar/items/notifications-button.svelte';
   import PageSwitcher from '$lib/components/global/toolbar/items/page-switcher.svelte';
@@ -21,6 +22,7 @@
     <QuickSearchBar />
     <div role="none" class="buttons">
       <PublishButton />
+      <DeployButton />
       <CreateButton />
       <NotificationsButton />
       <!-- @todo Show the Help menu when end user resources are prepared -->
