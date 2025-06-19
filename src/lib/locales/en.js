@@ -61,6 +61,12 @@ export const strings = {
   back: 'Back',
   loading: 'Loading…',
   later: 'Later',
+  cancel: 'Cancel',
+
+  // UI Library keys
+  _sui: {
+    cancel: 'Cancel',
+  },
 
   // Common errors
   clipboard_error: 'There was an error while copying data.',
@@ -823,4 +829,13 @@ export const strings = {
       }
     }
   },
+
+  // Unused asset detection
+  unused: 'Unused',
+  unused_asset: 'Unused Asset',
+  unused_asset_tooltip: 'This asset is not used in any artwork entries',
+  used_in_artwork: 'Used in Artwork',
+  unused_artwork_asset_description: 'This asset is not referenced by any artwork entries and may be safe to remove.',
+  used_in_artwork_entries: 'This asset is used in artwork entries',
+  show_unused_artwork: 'Show Unused Artwork',
 };

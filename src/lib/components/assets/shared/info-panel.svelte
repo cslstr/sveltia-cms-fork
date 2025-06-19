@@ -7,6 +7,7 @@
   import AssetPreview from '$lib/components/assets/shared/asset-preview.svelte';
   import { goto } from '$lib/services/app/navigation';
   import { defaultAssetDetails, getAssetDetails, isMediaKind } from '$lib/services/assets';
+  import { isAssetUnusedInArtwork } from '$lib/services/assets/artwork-usage';
   import { getFilesByEntry } from '$lib/services/contents/collection/files';
   import { getAssociatedCollections } from '$lib/services/contents/entry';
   import { getEntrySummary } from '$lib/services/contents/entry/summary';
@@ -39,6 +40,8 @@
   const { publicURL, repoBlobURL, dimensions, duration, usedEntries } = $derived(details);
   const { extension = '' } = $derived(getPathInfo(path));
   const canPreview = $derived(isMediaKind(kind) || path.endsWith('.pdf'));
+  const isArtworkAsset = $derived(path.startsWith('assets/artwork/'));
+  const isUnusedInArtwork = $derived(isAssetUnusedInArtwork(asset));
 
   /**
    * Update the properties above.
@@ -137,6 +140,25 @@
       </p>
     </section>
   {/if}
+  {#if isArtworkAsset}
+    <section>
+      <h4>{$_('used_in_artwork')}</h4>
+      {#if isUnusedInArtwork}
+        <div class="unused-notice">
+          <span class="icon">⚠️</span>
+          <div>
+            <p><strong>{$_('unused_asset')}</strong></p>
+            <p class="description">{$_('unused_artwork_asset_description')}</p>
+          </div>
+        </div>
+      {:else}
+        <p class="used-notice">
+          <span class="icon">✅</span>
+          {$_('used_in_artwork_entries')}
+        </p>
+      {/if}
+    </section>
+  {/if}
   <section>
     <h4>{$_('used_in')}</h4>
     {#each usedEntries as entry (entry.sha)}
@@ -195,6 +217,38 @@
       font-size: var(--sui-font-size-small);
       font-weight: var(--sui-font-weight-bold);
       color: var(--sui-secondary-foreground-color);
+    }
+
+    .unused-notice {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 8px;
+      background-color: #fef3c7; /* Yellow-100 */
+      border: 1px solid #fbbf24; /* Yellow-400 */
+      border-radius: 6px;
+      
+      .icon {
+        flex-shrink: 0;
+        font-size: 14px;
+      }
+      
+      .description {
+        font-size: var(--sui-font-size-small);
+        color: var(--sui-secondary-foreground-color);
+        margin-top: 2px;
+      }
+    }
+
+    .used-notice {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--sui-success-foreground-color);
+      
+      .icon {
+        font-size: 12px;
+      }
     }
   }
 </style>

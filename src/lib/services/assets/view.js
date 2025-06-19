@@ -10,6 +10,7 @@ import {
   selectedAssets,
   uploadingAssets,
 } from '$lib/services/assets';
+import { isAssetUnusedInArtwork } from '$lib/services/assets/artwork-usage';
 import { backend } from '$lib/services/backends';
 import { siteConfig } from '$lib/services/config';
 import { prefs } from '$lib/services/user/prefs';
@@ -147,6 +148,10 @@ const filterAssets = (assets, { field, pattern } = { field: '', pattern: '' }) =
 
   if (field === 'fileType') {
     return assets.filter(({ path }) => getAssetKind(path) === pattern);
+  }
+
+  if (field === 'unusedArtwork') {
+    return assets.filter((asset) => isAssetUnusedInArtwork(asset));
   }
 
   const regex = getRegex(pattern);

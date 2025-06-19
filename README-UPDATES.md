@@ -205,3 +205,153 @@ src/lib/
 - Template inheritance and composition
 - Visual template editor
 - Template marketplace/sharing system
+
+---
+
+## Feature 2: Unused Asset Detection for Artwork Collection
+
+### Overview
+**Implementation Date**: December 19, 2024
+**Status**: ✅ Complete and Production Ready
+
+A comprehensive unused asset detection system that identifies assets in the `assets/artwork/` folder that are not referenced by any artwork entries in the YAML-based artwork collection. This feature provides visual indicators, filtering capabilities, and detailed usage information to help maintain a clean and organized asset library.
+
+### Features
+
+#### Visual Indicators
+- **Yellow Warning Badges**: Visual indicators on unused assets in both grid and list views
+- **Smart Positioning**: Grid mode badges appear as overlay on image preview; list mode badges appear next to filename for better visibility
+- **Clear Messaging**: "⚠ UNUSED" text with tooltips explaining the status
+
+#### Smart Detection
+- **YAML Analysis**: Analyzes artwork collection YAML entries to identify unused image assets
+- **Path Conversion**: Handles conversion between internal (`assets/artwork/`) and public (`/artwork/`) paths
+- **Performance Optimized**: Only processes artwork-related assets with reactive updates
+
+#### Filter Integration
+- **"Show Unused Artwork" Checkbox**: Added to asset toolbar for quick filtering
+- **Smart Display**: Only appears when artwork assets are present in the current folder
+- **State Persistence**: Filter state is saved with other view preferences
+- **Seamless Integration**: Works with existing sorting, grouping, and other filters
+
+#### Enhanced Asset Details
+- **"Used in Artwork" Section**: Special section in asset details panel showing usage status
+- **Clear Status Messages**: Distinct styling and messaging for unused vs used assets
+- **User Guidance**: Helpful descriptions and suggestions for unused assets
+
+#### Localization
+- **Full Language Support**: Complete English and Japanese language support
+- **Consistent Terminology**: Unified language across all interface elements
+
+### Configuration
+
+No configuration required - the feature automatically detects artwork assets and analyzes the artwork collection. The system works with the standard Sveltia CMS artwork collection configuration:
+
+```yaml
+collections:
+  - name: "artwork"
+    label: "Artwork"
+    folder: "assets/artwork"
+    fields:
+      - {label: "Image", name: "image", widget: "image", required: true}
+      # ... other fields
+```
+
+### How It Works
+
+1. **Asset Scanning**: Identifies all assets in the `assets/artwork/` folder
+2. **Entry Analysis**: Parses all artwork collection YAML files to extract image field references
+3. **Path Matching**: Converts public paths (`/artwork/image.jpg`) to internal paths (`assets/artwork/image.jpg`) for comparison
+4. **Usage Detection**: Marks assets as unused if they're not referenced by any artwork entry
+5. **Visual Display**: Shows yellow warning badges on unused assets with comprehensive details
+
+### User Experience
+
+#### Discovery Workflow
+1. **Visual Scanning**: Users immediately see yellow badges on unused assets in both grid and list views
+2. **Quick Filtering**: Use "Show Unused Artwork" checkbox in toolbar to see only unused assets
+3. **Detailed Investigation**: Click assets to see comprehensive usage status in details panel
+4. **Asset Management**: Easily identify and clean up unused files from artwork collection
+
+#### Interface Elements
+- **Grid View**: Badge appears as overlay on top-right of image preview
+- **List View**: Badge appears prominently next to filename (not hidden on tiny thumbnail)
+- **Toolbar Filter**: Checkbox only appears when artwork assets are present
+- **Details Panel**: Special "Used in Artwork" section with clear status messaging
+
+### Technical Implementation
+
+#### Files Modified/Created
+- `src/lib/services/assets/artwork-usage.js` - Core detection service
+- `src/lib/services/assets/view.js` - Enhanced filtering system
+- `src/lib/components/assets/shared/unused-asset-badge.svelte` - Visual indicator component
+- `src/lib/components/assets/list/asset-list-item.svelte` - Badge integration with improved positioning
+- `src/lib/components/assets/list/secondary-toolbar.svelte` - Added filter checkbox
+- `src/lib/components/assets/shared/info-panel.svelte` - Enhanced details panel
+- `src/lib/locales/en.js` & `src/lib/locales/ja.js` - Localization strings and UI fixes
+
+#### Architecture
+- **Reactive Stores**: Uses Svelte reactive stores for efficient updates when content changes
+- **Path Conversion Logic**: Robust handling of internal vs public path formats
+- **Filter Integration**: Seamlessly integrates with existing asset filtering system
+- **Performance Conscious**: Only processes artwork-related assets to minimize impact
+- **Extensible Design**: Architecture can be extended to other collection types
+
+#### Core Detection Algorithm
+```javascript
+const getUnusedArtworkAssets = () => {
+  // 1. Get all assets in artwork folder
+  const artworkAssets = allAssets.filter(asset =>
+    asset.path.startsWith('assets/artwork/')
+  );
+  
+  // 2. Get all artwork entries
+  const artworkEntries = getEntriesByCollection('artwork');
+  
+  // 3. Extract all image paths from YAML
+  const usedImagePaths = artworkEntries
+    .map(entry => entry.locales[defaultLocale].content.image)
+    .filter(Boolean)
+    .map(path => convertPublicToInternalPath(path));
+  
+  // 4. Find unused assets
+  return artworkAssets.filter(asset =>
+    !usedImagePaths.includes(asset.path)
+  );
+};
+```
+
+### Benefits
+
+#### For Content Managers
+- **Visual Clarity**: Immediately identify unused assets without manual checking
+- **Storage Optimization**: Safely remove unnecessary files to reduce storage usage
+- **Content Audit**: Better understanding of asset utilization across artwork collection
+- **Workflow Efficiency**: Faster asset management decisions with clear visual feedback
+
+#### For Developers
+- **Clean Architecture**: Well-structured, maintainable code following Svelte best practices
+- **Performance**: Efficient reactive implementation with minimal system impact
+- **Extensibility**: Easy to extend to other collections beyond artwork
+- **Documentation**: Comprehensive implementation documentation for future maintenance
+
+#### For Users
+- **Intuitive Interface**: Clear visual indicators and messaging throughout the interface
+- **Accessibility**: Full screen reader and keyboard navigation support
+- **Multilingual**: Complete support for English and Japanese languages
+- **Non-Disruptive**: Doesn't interfere with existing asset management workflows
+
+### Compatibility
+
+- **Sveltia CMS**: Fully integrated with existing asset management system
+- **YAML Collections**: Specifically designed for YAML-based artwork collections
+- **Responsive Design**: Works across all screen sizes and device types
+- **Browser Support**: Compatible with all modern browsers supported by Sveltia CMS
+
+### Future Enhancements
+
+- **Multi-Collection Support**: Extend to other collection types beyond artwork
+- **Bulk Operations**: Add bulk delete functionality for unused assets
+- **Usage Analytics**: Track asset usage patterns over time
+- **Automated Cleanup**: Optional automated removal of unused assets after specified periods
+- **Export Functionality**: Export lists of unused assets for external processing

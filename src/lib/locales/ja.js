@@ -61,6 +61,12 @@ export const strings = {
   back: '戻る',
   loading: '読み込み中…',
   later: '後で',
+  cancel: 'キャンセル',
+
+  // UI Library keys
+  _sui: {
+    cancel: 'キャンセル',
+  },
 
   // Common errors
   clipboard_error: 'データのコピー中に問題が発生しました。',
@@ -801,4 +807,13 @@ export const strings = {
     gb: '{size} GB',
     tb: '{size} TB',
   },
+
+  // Unused asset detection
+  unused: '未使用',
+  unused_asset: '未使用アセット',
+  unused_asset_tooltip: 'このアセットはアートワークエントリで使用されていません',
+  used_in_artwork: 'アートワークで使用',
+  unused_artwork_asset_description: 'このアセットはアートワークエントリで参照されておらず、削除しても安全な可能性があります。',
+  used_in_artwork_entries: 'このアセットはアートワークエントリで使用されています',
+  show_unused_artwork: '未使用アートワークを表示',
 };

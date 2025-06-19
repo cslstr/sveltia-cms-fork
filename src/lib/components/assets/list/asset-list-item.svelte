@@ -1,8 +1,10 @@
 <script>
   import { Checkbox, GridCell, GridRow, TruncatedText } from '@sveltia/ui';
   import AssetPreview from '$lib/components/assets/shared/asset-preview.svelte';
+  import UnusedAssetBadge from '$lib/components/assets/shared/unused-asset-badge.svelte';
   import { goto } from '$lib/services/app/navigation';
   import { canPreviewAsset, focusedAsset, selectedAssets } from '$lib/services/assets';
+  import { isAssetUnusedInArtwork } from '$lib/services/assets/artwork-usage';
   import { listedAssets } from '$lib/services/assets/view';
   import { isMediumScreen, isSmallScreen } from '$lib/services/user/env';
 
@@ -25,6 +27,7 @@
   } = $props();
 
   const { name, kind } = $derived(asset);
+  const isUnused = $derived(isAssetUnusedInArtwork(asset));
 
   /**
    * Update the asset selection.
@@ -81,20 +84,34 @@
     </GridCell>
   {/if}
   <GridCell class="image">
-    <AssetPreview
-      {kind}
-      {asset}
-      variant={viewType === 'list' ? 'icon' : 'tile'}
-      cover={$isSmallScreen}
-      checkerboard={kind === 'image'}
-    />
+    <div class="image-container">
+      <AssetPreview
+        {kind}
+        {asset}
+        variant={viewType === 'list' ? 'icon' : 'tile'}
+        cover={$isSmallScreen}
+        checkerboard={kind === 'image'}
+      />
+      {#if viewType === 'grid'}
+        <UnusedAssetBadge
+          variant="grid"
+          show={isUnused}
+        />
+      {/if}
+    </div>
   </GridCell>
   {#if !$isSmallScreen || viewType === 'list'}
     <GridCell class="title">
-      <div role="none" class="label">
+      <div role="none" class="label title-container">
         <TruncatedText lines={2}>
           {name}
         </TruncatedText>
+        {#if viewType === 'list'}
+          <UnusedAssetBadge
+            variant="list"
+            show={isUnused}
+          />
+        {/if}
       </div>
     </GridCell>
   {/if}
@@ -103,5 +120,20 @@
 <style lang="scss">
   .label {
     word-break: break-all;
+    
+    &.title-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+  }
+
+  :global(.image) {
+    .image-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
   }
 </style>

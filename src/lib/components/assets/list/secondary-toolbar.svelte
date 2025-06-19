@@ -1,5 +1,5 @@
 <script>
-  import { Button, Divider, Icon, Spacer, Toolbar } from '@sveltia/ui';
+  import { Button, Checkbox, Divider, Icon, Spacer, Toolbar } from '@sveltia/ui';
   import { _ } from 'svelte-i18n';
   import FilterMenu from '$lib/components/common/page-toolbar/filter-menu.svelte';
   import ItemCount from '$lib/components/common/page-toolbar/item-count.svelte';
@@ -7,11 +7,14 @@
   import SortMenu from '$lib/components/common/page-toolbar/sort-menu.svelte';
   import ViewSwitcher from '$lib/components/common/page-toolbar/view-switcher.svelte';
   import { ASSET_KINDS, selectedAssets } from '$lib/services/assets';
+  import { getArtworkAssets } from '$lib/services/assets/artwork-usage';
   import { assetGroups, currentView, listedAssets, sortFields } from '$lib/services/assets/view';
   import { isMediumScreen, isSmallScreen } from '$lib/services/user/env';
 
   const hasListedAssets = $derived(!!$listedAssets.length);
   const hasMultipleAssets = $derived($listedAssets.length > 1);
+  const hasArtworkAssets = $derived(getArtworkAssets().length > 0);
+  const showUnusedFilter = $derived($currentView.filter?.field === 'unusedArtwork');
 </script>
 
 <Toolbar variant="secondary" aria-label={$_('asset_list')}>
@@ -38,6 +41,19 @@
     filters={ASSET_KINDS.map((type) => ({ label: $_(type), field: 'fileType', pattern: type }))}
     aria-controls="asset-list"
   />
+  {#if hasArtworkAssets}
+    <Checkbox
+      label={$_('show_unused_artwork')}
+      checked={showUnusedFilter}
+      disabled={!hasListedAssets}
+      onChange={({ detail: { checked } }) => {
+        currentView.update((view) => ({
+          ...view,
+          filter: checked ? { field: 'unusedArtwork', pattern: '' } : undefined,
+        }));
+      }}
+    />
+  {/if}
   <ViewSwitcher disabled={!hasListedAssets} {currentView} aria-controls="asset-list" />
   {#if !($isSmallScreen || $isMediumScreen)}
     <Divider orientation="vertical" />
