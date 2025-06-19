@@ -129,9 +129,11 @@ const registerPreviewStyle = (style, { raw = false } = {}) => {
  * @see https://decapcms.org/docs/customization/#registerpreviewtemplate
  */
 const registerPreviewTemplate = (name, component) => {
-  // eslint-disable-next-line no-console
-  console.error('Custom preview templates are not yet supported in Sveltia CMS.');
-  void [name, component];
+  // Import the registration function dynamically to avoid circular dependencies
+  import('$lib/services/contents/preview-templates.js').then(({ registerPreviewTemplate: register }) => {
+    // Cast the component to any to handle React/Svelte component type differences
+    register(name, /** @type {any} */ (component));
+  });
 };
 
 /**

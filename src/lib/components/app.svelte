@@ -15,6 +15,8 @@
   import { dataLoaded } from '$lib/services/contents';
   import { user } from '$lib/services/user';
   import { initUserEnvDetection } from '$lib/services/user/env';
+  // Initialize preview templates
+  import { loadSiteTemplates } from '$lib/services/contents/preview-templates.js';
 
   /**
    * @import { SiteConfig } from '$lib/types/public';
@@ -42,6 +44,10 @@
 
   onMount(() => {
     initUserEnvDetection();
+  });
+
+  onMount(() => {
+    loadSiteTemplates();
   });
 
   // Fix the position of the custom mount element if needed
