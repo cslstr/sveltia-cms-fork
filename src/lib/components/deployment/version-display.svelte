@@ -36,7 +36,7 @@
     display: flex;
     align-items: center;
     gap: 1rem;
-    min-height: 3em;
+    min-height: 3.5em;
     padding: 0 1rem;
     background: var(--sui-secondary-background-color);
     border: 1px solid var(--sui-secondary-border-color);
