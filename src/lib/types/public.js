@@ -91,6 +91,10 @@
  * Configuration for the default media library.
  * @typedef {object} DefaultMediaLibraryConfig
  * @property {number} [max_file_size] Maximum file size in bytes that can be accepted for uploading.
+ * @property {boolean} [slugify_filename] Whether to rename an original asset file when saving it,
+ * according to the global `slug` option. Default: `false`, meaning that the original file name is
+ * kept by default, while Netlify/Decap CMS forces to slugify file names. If set to `true`, for
+ * example, `Hello World (1).webp` would be `hello-world-1.webp`.
  * @property {FileTransformations} [transformations] File transformation option map. The key is an
  * original format like `png` or `jpeg`. It can also be `raster_image` that matches any supported
  * raster image format.
@@ -443,8 +447,12 @@
  * @property {string} [label_singular] Label to be displayed on the Add button. Default: `label`
  * field value.
  * @property {string} [summary] Template of a label to be displayed on a collapsed list item.
- * @property {boolean} [collapsed] Whether to collapse the UI by default. Default: `false`.
- * @property {boolean} [minimize_collapsed] Whether to collapse the entire UI. Default: `false`.
+ * @property {boolean | 'auto'} [collapsed] Whether to collapse the list items by default. Default:
+ * `false`. If set to `auto`, the UI is collapsed if the item has any filled subfields and expanded
+ * if all the subfields are empty.
+ * @property {boolean | 'auto'} [minimize_collapsed] Whether to collapse the entire list. Default:
+ * `false`. If set to `auto`, the UI is collapsed if the list has any items and expanded if it’s
+ * empty.
  * @property {Field} [field] Single field to be included in a list item.
  * @property {Field[]} [fields] Set of fields to be included in a list item.
  * @property {boolean} [root] Whether to save the field value at the top-level of the data file
@@ -545,7 +553,9 @@
  * @typedef {object} ObjectFieldProps
  * @property {'object'} widget Widget name.
  * @property {Record<string, any>} [default] Default values.
- * @property {boolean} [collapsed] Whether to collapse the UI by default. Default: `false`.
+ * @property {boolean | 'auto'} [collapsed] Whether to collapse the object by default. Default:
+ * `false`. If set to `auto`, the UI is collapsed if the object has any filled subfields and
+ * expanded if all the subfields are empty.
  * @property {string} [summary] Template of a label to be displayed on a collapsed object.
  * @property {Field[]} fields Set of fields to be included.
  * @see https://decapcms.org/docs/widgets/#object
@@ -638,6 +648,7 @@
  * UUID field properties.
  * @typedef {object} UuidFieldProps
  * @property {'uuid'} widget Widget name.
+ * @property {string} [default] Default value.
  * @property {string} [prefix] A string to be prepended to the value. Default: empty string.
  * @property {boolean} [use_b32_encoding] Whether to encode the value with Base32. Default: `false`.
  * @property {boolean} [read_only] Whether to make the field read-only. Default: `true`.

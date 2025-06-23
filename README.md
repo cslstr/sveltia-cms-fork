@@ -482,6 +482,7 @@ Note: The Date widget has been deprecated in Netlify CMS and removed from both D
 - List and Object
   - The `summary` is displayed correctly when it refers to a Relation field[^36] or a simple List field.
   - The `summary` template tags support [transformations](https://decapcms.org/docs/summary-strings/), e.g. `{{fields.date | date('YYYY-MM-DD')}}`.
+  - The `collapsed` option accepts the value `auto` to automatically collapse the widget if any of its subfields are filled out. The same applies to the `minimize_collapsed` option for the List widget.
 - Markdown, String and Text
   - A required field containing only spaces or line breaks will result in a validation error, as if no characters were entered.
 - Relation and Select
@@ -523,6 +524,7 @@ Note: The Date widget has been deprecated in Netlify CMS and removed from both D
   - Default media library
     - It comes with a [built-in image optimizer](#optimizing-images-for-upload). With a few lines of configuration, images selected by users for upload are automatically converted to WebP format for reduced size,[^199] and it’s also possible to specify a maximum width and/or height.[^200] SVG images can also be optimized.
     - The `max_file_size` option for the File/Image widget can be defined within the global `media_library` option, using `default` as the library name. It applies to all File/Image entry fields, as well as direct uploads to the Asset Library. The option can also be part of the [new `media_libraries` option](#configuring-multiple-media-libraries).
+    - Unlike Netlify/Decap CMS, files are uploaded with their original names. Uppercase letters and spaces are not converted to lowercase letters and hyphens.[^97] If you want to slugify filenames according to the [`slug` option](https://decapcms.org/docs/configuration-options/#slug-type), use the `slugify_filename` [default media library option](#configuring-multiple-media-libraries).
   - Other integrations
     - Integrates stock photo providers, including Pexels, Pixabay and Unsplash.[^8] Developers can [disable them](#disabling-stock-assets) if needed.
     - More integration options, including Amazon S3 and Cloudflare R2/Images/Stream, would be added in the future.
@@ -532,7 +534,6 @@ Note: The Date widget has been deprecated in Netlify CMS and removed from both D
 - These entry-relative assets are automatically deleted when the associated entry is deleted because these are not available for other entries.[^22] When you’re [working with a local repository](#working-with-a-local-git-repository), the empty enclosing folder is also deleted.
 - Hidden files (dot files) don’t appear in the Asset Library.[^47]
 - Users can add assets using the Quick Add button in the upper right corner of the application.
-- Files are uploaded with their original names, without converting uppercase letters and spaces to lowercase letters and hyphens.[^97]
 
 ### Better customization
 
@@ -569,7 +570,7 @@ However, 100% feature parity is not planned, and some features are still missing
   - Note: Some other camel case options, including Color widget options, are not deprecated.
 - The deprecated Date widget: It was removed from Decap CMS 3.0 and Sveltia CMS 0.10. Use the DateTime widget with the [`time_format: false` option](#changing-the-input-type-of-a-datetime-field) instead.
 - Some date/time format tokens: [Decap CMS 3.1.1](https://github.com/decaporg/decap-cms/releases/tag/decap-cms%403.1.1) replaced Moment.js with Day.js, and Sveltia CMS will follow suit soon. Since [Day.js tokens](https://day.js.org/docs/en/display/format) are not 100% compatible with [Moment.js tokens](https://momentjs.com/docs/#/displaying/format/), this could be a breaking change in certain cases.
-- The theme and keymap inline settings of the Code widget, along with support for some languages: We use the [Prism](https://prismjs.com/)-powered code block functionality in Lexical instead of [CodeMirror](https://codemirror.net/). Prism may be [replaced by Shiki](https://github.com/facebook/lexical/issues/6575) in the future.
+- The theme and keymap inline settings for the Code widget, along with support for some languages: We use the [Prism](https://prismjs.com/)-powered code block functionality in Lexical instead of [CodeMirror](https://codemirror.net/). Prism may be [replaced by Shiki](https://github.com/facebook/lexical/issues/6575) in the future.
 - Remark plugins for the Markdown widget: Not compatible with our Lexical-based rich text editor.
 - An absolute URL in the [`public_folder`](https://decapcms.org/docs/configuration-options/#public-folder) option: Such configuration is not recommended, as stated in the Netlify/Decap CMS document.
 - Performance-related options: Sveltia CMS has [drastically improved performance](#better-performance) with GraphQL enabled by default, so these are no longer relevant:
@@ -658,7 +659,7 @@ Currently, Sveltia CMS is primarily intended for existing Netlify/Decap CMS user
 Or try one of the starter kits for popular frameworks created by community members:
 
 - Astro
-  - [astro-sveltia-cms](https://github.com/majesticostudio/astro-sveltia-cms), [astro-starter](https://github.com/zankhq/astro-starter) and [astros](https://github.com/zankhq/astros) by [@zanhk](https://github.com/zanhk)
+  - [astros](https://github.com/zankhq/astros) by [@zanhk](https://github.com/zanhk)
   - [Astro i18n Starter](https://github.com/yacosta738/astro-cms) by [@yacosta738](https://github.com/yacosta738)
 - Eleventy (11ty)
   - [Eleventy starter template](https://github.com/danurbanowicz/eleventy-sveltia-cms-starter) by [@danurbanowicz](https://github.com/danurbanowicz)
@@ -1033,7 +1034,8 @@ Sveltia CMS has added support for multiple media libraries with the new `media_l
 media_libraries:
   default:
     config:
-      max_file_size: 1024000
+      max_file_size: 1024000 # default: Infinity
+      slugify_filename: true # default: false
       transformations:
         # See the next section
   cloudinary:
@@ -1410,7 +1412,7 @@ This software is provided “as is” without any express or implied warranty. W
 
 [^6]: Netlify/Decap CMS [#3240](https://github.com/decaporg/decap-cms/issues/3240)
 
-[^7]: Netlify/Decap CMS [#4386](https://github.com/decaporg/decap-cms/issues/4386), [#4888](https://github.com/decaporg/decap-cms/issues/4888)
+[^7]: Netlify/Decap CMS [#4386](https://github.com/decaporg/decap-cms/issues/4386), [#4888](https://github.com/decaporg/decap-cms/issues/4888), [#7332](https://github.com/decaporg/decap-cms/issues/7332), [#7514](https://github.com/decaporg/decap-cms/issues/7514)
 
 [^8]: Netlify/Decap CMS [#2579](https://github.com/decaporg/decap-cms/issues/2579)
 
@@ -1622,7 +1624,7 @@ This software is provided “as is” without any express or implied warranty. W
 
 [^112]: Netlify/Decap CMS [#5815](https://github.com/decaporg/decap-cms/issues/5815), [#6522](https://github.com/decaporg/decap-cms/issues/6522), [#6532](https://github.com/decaporg/decap-cms/issues/6532), [#6588](https://github.com/decaporg/decap-cms/issues/6588), [#6617](https://github.com/decaporg/decap-cms/issues/6617), [#6640](https://github.com/decaporg/decap-cms/issues/6640), [#6663](https://github.com/decaporg/decap-cms/issues/6663), [#6695](https://github.com/decaporg/decap-cms/issues/6695), [#6697](https://github.com/decaporg/decap-cms/issues/6697), [#6764](https://github.com/decaporg/decap-cms/issues/6764), [#6765](https://github.com/decaporg/decap-cms/issues/6765), [#6835](https://github.com/decaporg/decap-cms/issues/6835), [#6983](https://github.com/decaporg/decap-cms/issues/6983), [#7205](https://github.com/decaporg/decap-cms/issues/7205), [#7450](https://github.com/decaporg/decap-cms/issues/7450), [#7453](https://github.com/decaporg/decap-cms/issues/7453)
 
-[^113]: Netlify/Decap CMS [#5656](https://github.com/decaporg/decap-cms/issues/5656), [#5837](https://github.com/decaporg/decap-cms/issues/5837), [#5972](https://github.com/decaporg/decap-cms/issues/5972), [#6476](https://github.com/decaporg/decap-cms/issues/6476), [#6516](https://github.com/decaporg/decap-cms/issues/6516), [#6930](https://github.com/decaporg/decap-cms/issues/6930), [#6965](https://github.com/decaporg/decap-cms/issues/6965), [#7080](https://github.com/decaporg/decap-cms/issues/7080), [#7105](https://github.com/decaporg/decap-cms/issues/7105), [#7106](https://github.com/decaporg/decap-cms/issues/7106), [#7119](https://github.com/decaporg/decap-cms/issues/7119), [#7176](https://github.com/decaporg/decap-cms/issues/7176), [#7194](https://github.com/decaporg/decap-cms/issues/7194), [#7244](https://github.com/decaporg/decap-cms/issues/7244), [#7278](https://github.com/decaporg/decap-cms/issues/7278), [#7301](https://github.com/decaporg/decap-cms/issues/7301), [#7342](https://github.com/decaporg/decap-cms/issues/7342), [#7348](https://github.com/decaporg/decap-cms/issues/7348), [#7354](https://github.com/decaporg/decap-cms/issues/7354), [#7376](https://github.com/decaporg/decap-cms/issues/7376), [#7408](https://github.com/decaporg/decap-cms/issues/7408), [#7412](https://github.com/decaporg/decap-cms/issues/7412), [#7413](https://github.com/decaporg/decap-cms/issues/7413), [#7422](https://github.com/decaporg/decap-cms/issues/7422), [#7427](https://github.com/decaporg/decap-cms/issues/7427), [#7434](https://github.com/decaporg/decap-cms/issues/7434), [#7438](https://github.com/decaporg/decap-cms/issues/7438), [#7454](https://github.com/decaporg/decap-cms/issues/7454), [#7464](https://github.com/decaporg/decap-cms/issues/7464), [#7471](https://github.com/decaporg/decap-cms/issues/7471), [#7485](https://github.com/decaporg/decap-cms/issues/7485), [#7499](https://github.com/decaporg/decap-cms/issues/7499) — These `removeChild` crashes are common in React apps, likely caused by a [browser extension](https://github.com/facebook/react/issues/17256) or [Google Translate](https://github.com/facebook/react/issues/11538).
+[^113]: Netlify/Decap CMS [#5656](https://github.com/decaporg/decap-cms/issues/5656), [#5837](https://github.com/decaporg/decap-cms/issues/5837), [#5972](https://github.com/decaporg/decap-cms/issues/5972), [#6476](https://github.com/decaporg/decap-cms/issues/6476), [#6516](https://github.com/decaporg/decap-cms/issues/6516), [#6930](https://github.com/decaporg/decap-cms/issues/6930), [#6965](https://github.com/decaporg/decap-cms/issues/6965), [#7080](https://github.com/decaporg/decap-cms/issues/7080), [#7105](https://github.com/decaporg/decap-cms/issues/7105), [#7106](https://github.com/decaporg/decap-cms/issues/7106), [#7119](https://github.com/decaporg/decap-cms/issues/7119), [#7176](https://github.com/decaporg/decap-cms/issues/7176), [#7194](https://github.com/decaporg/decap-cms/issues/7194), [#7244](https://github.com/decaporg/decap-cms/issues/7244), [#7278](https://github.com/decaporg/decap-cms/issues/7278), [#7301](https://github.com/decaporg/decap-cms/issues/7301), [#7342](https://github.com/decaporg/decap-cms/issues/7342), [#7348](https://github.com/decaporg/decap-cms/issues/7348), [#7354](https://github.com/decaporg/decap-cms/issues/7354), [#7376](https://github.com/decaporg/decap-cms/issues/7376), [#7408](https://github.com/decaporg/decap-cms/issues/7408), [#7412](https://github.com/decaporg/decap-cms/issues/7412), [#7413](https://github.com/decaporg/decap-cms/issues/7413), [#7422](https://github.com/decaporg/decap-cms/issues/7422), [#7427](https://github.com/decaporg/decap-cms/issues/7427), [#7434](https://github.com/decaporg/decap-cms/issues/7434), [#7438](https://github.com/decaporg/decap-cms/issues/7438), [#7454](https://github.com/decaporg/decap-cms/issues/7454), [#7464](https://github.com/decaporg/decap-cms/issues/7464), [#7471](https://github.com/decaporg/decap-cms/issues/7471), [#7485](https://github.com/decaporg/decap-cms/issues/7485), [#7499](https://github.com/decaporg/decap-cms/issues/7499), [#7515](https://github.com/decaporg/decap-cms/issues/7515) — These `removeChild` crashes are common in React apps, likely caused by a [browser extension](https://github.com/facebook/react/issues/17256) or [Google Translate](https://github.com/facebook/react/issues/11538).
 
 [^114]: Netlify/Decap CMS [#5029](https://github.com/decaporg/decap-cms/issues/5029), [#5048](https://github.com/decaporg/decap-cms/issues/5048)
 
